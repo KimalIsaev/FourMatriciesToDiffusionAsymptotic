@@ -10,7 +10,7 @@
 srcdir = .
 VPATH = .
 
-#CC = gcc
+CC = clang
 
 DEFS = -DHAVE_CONFIG_H
 LIBS =  -lm
@@ -32,7 +32,7 @@ ZIP = zip -r -l
 ###############################
 
 LIST1 = copy.o err.o matrixio.o memory.o vecop.o matop.o pxop.o \
-	submat.o init.o otherio.o machine.o matlab.o ivecop.o version.o \
+	submat.o init.o otherio.o matlab.o ivecop.o version.o \
 	meminfo.o memstat.o
 LIST2 = lufactor.o bkpfacto.o chfactor.o qrfactor.o solve.o hsehldr.o \
 	givens.o update.o norm.o hessen.o symmeig.o schur.o svd.o fft.o \
