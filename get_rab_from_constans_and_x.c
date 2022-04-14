@@ -1,3 +1,7 @@
+
+#include "Meschach/matrix.h"
+#include "Meschach/matrix2.h"
+
 struct constants_for_calculating_rab {
     MAT* B;
     MAT* K;
@@ -23,9 +27,9 @@ get_vector_full_of_ones(
     return result;
 }
 
-MAT*
+VEC*
 concatenate_number_to_vector_end(
-        const VEC* v
+        const VEC* v,
         double number)
 {
     VEC* result = v_get(v->dim);
@@ -47,14 +51,14 @@ concatenate_vector_to_matrix_right(
     CONDITION_RETURN(vector_size != matrix_rows, NULL);
 
     MAT* result = m_get(matrix_rows, matrix_cols + 1);
-    for(size_t i = 0; i < n; i++) {
-        for(size_t j = 0; j < n; j++) {
+    for(size_t i = 0; i < matrix_rows; i++) {
+        for(size_t j = 0; j < matrix_cols; j++) {
             m_set_val(result, i, j, m_get_val(m, i, j));
         }
     }
 
-    for(size_t i = 0; i < n; i++) {
-            m_set_val(result, i, n, v_get_val(v, i));
+    for(size_t i = 0; i < matrix_rows; i++) {
+            m_set_val(result, i, matrix_cols, v_get_val(v, i));
     }
 
     return result;
@@ -72,9 +76,9 @@ get_right_g_inverse(
     MAT* result = m_mlt(matrix_transposed, 
         inverse_of_matrix_to_matrix_transposed, MNULL);
 
-    FREE(matrix_transposed);
-    FREE(matrix_to_matrix_transposed);
-    FREE(inverse_of_matrix_to_matrix_transposed);
+    M_FREE(matrix_transposed);
+    M_FREE(matrix_to_matrix_transposed);
+    M_FREE(inverse_of_matrix_to_matrix_transposed);
     return result;
 }
 
@@ -99,11 +103,13 @@ get_S(
 VEC*
 get_u(size_t n)
 {
-    VEC* result = v_set(n+1);
-    for(size_t i = 0; i < n; i++) {
-        v_set(result, i, 0);
+    size_t i;
+    VEC* result = v_get(n+1);
+    for(i = 0; i < n; i++) {
+        v_set_val(result, i, 0);
     }
-    v_set(result, i, 1);
+    v_set_val(result, i, 1);
+    return result;
 }
 
 MAT*
@@ -147,19 +153,19 @@ get_g(
         double a,
         double x)
 {
-    MAT* xK = sv_mlt(x, K, MNULL);
+    MAT* xK = sm_mlt(x, K, MNULL);
     MAT* xK_minus_B = m_sub(xK, B, MNULL);
     VEC* xrK_minus_rB = vm_mlt(xK_minus_B, r, VNULL);
     VEC* ar = sv_mlt(a, r, VNULL);
     VEC* ar_plus_xrK_minus_rB = 
-        v_sub(ar_plus_xrK, rB, VNULL);
+        v_add(ar, xrK_minus_rB, VNULL);
     VEC* ar_plus_xrK_minus_rB_with_concatenated_zero = 
         concatenate_number_to_vector_end(ar_plus_xrK_minus_rB, 0);
     VEC* result = vm_mlt(g_inverse_of_S, 
         ar_plus_xrK_minus_rB_with_concatenated_zero, VNULL);
 
-    V_FREE(xK);
-    V_FREE(xK_minus_B);
+    M_FREE(xK);
+    M_FREE(xK_minus_B);
     V_FREE(xrK_minus_rB);
     V_FREE(ar);
     V_FREE(ar_plus_xrK_minus_rB);
@@ -182,7 +188,7 @@ get_b(
     MAT* xI = sm_mlt(x, I, MNULL);
     MAT* B_minus_xI = m_sub(B, xI, MNULL);
     VEC* g_to_B_minus_xI = vm_mlt(B_minus_xI, g, VNULL);
-    VEC* xrI = vm_mlt(r, xI, VNULL);
+    VEC* xrI = vm_mlt(xI, r, VNULL);
     VEC* g_to_B_minus_xI_all_minus_xrI = v_sub(
         g_to_B_minus_xI, xrI, VNULL);
     double result = 
@@ -211,8 +217,8 @@ set_rab_from_constants_for_rab_and_x(
         c->A_plus_B, c->K_minus_I, c->e, x);
     VEC* r_temp = get_r(g_inverse_of_S, c->u);
     double a_temp = get_a(c->Be, c->Ie, r_temp, x);
-    double b_temp = get_b(c->g_inverse_of_S, c->B, c->K, c->I,
-        c->e, c->r, a_temp, x);
+    double b_temp = get_b(g_inverse_of_S, c->B, c->K, c->I,
+        c->e, r_temp, a_temp, x);
     
     for (size_t i = 0; i < c->n; i++) {
         r[i] = v_get_val(r_temp, i);

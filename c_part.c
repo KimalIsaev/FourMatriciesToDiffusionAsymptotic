@@ -1,3 +1,5 @@
+#include "c_part.h"
+#include "trapezoidal_rule.h"
 #include "get_rab_from_constans_and_x.h"
 
 struct additional_information_for_b_divided_by_a{
@@ -18,7 +20,8 @@ execute_b_divided_by_a(
         (struct additional_information_for_b_divided_by_a*)not_converted_inf;
     double a;
     double b;
-    set_rab_from_constants_for_rab_and_x(&(inf->rs[i*r_size]),
+    size_t i = 0;
+    set_rab_from_constants_for_rab_and_x(&(inf->rs[i*inf->r_size]),
         &a, &b, inf->consts_for_rab, x); 
     inf->as[i] = a;
     inf->bs[i] = b;
@@ -37,7 +40,7 @@ get_additional_information(
         double* I,
         size_t n)
 {
-    struct additional_information_for_b_divided_by_a result =
+    struct additional_information_for_b_divided_by_a result;
     result.consts_for_rab =
         get_constants_for_rab_from_ABKI(A, B, K, I, n);
     result.bs = bs;
@@ -46,7 +49,7 @@ get_additional_information(
     result.r_size = n;
     result.i = 0;
     return result;
-{
+}
 
 void
 charge_a_b_integral(

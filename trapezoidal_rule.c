@@ -26,7 +26,6 @@ execute_at_every_point_trapezoidal_rule(
         prev_x = next_x;
         next_x += h;
     }
-    return result;
 }
 
 
