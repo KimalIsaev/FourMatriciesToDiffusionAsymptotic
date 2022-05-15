@@ -1,4 +1,4 @@
-#include "c_part.h"
+#include "four_matricies_to_diffusion_asymptotic.h"
 #include "trapezoidal_rule.h"
 #include "get_rab_from_constans_and_x.h"
 
@@ -20,12 +20,13 @@ execute_b_divided_by_a(
         (struct additional_information_for_b_divided_by_a*)not_converted_inf;
     double a;
     double b;
-    size_t i = 0;
-    set_rab_from_constants_for_rab_and_x(&(inf->rs[i*inf->r_size]),
+    size_t i = inf->i;
+    size_t n = inf->r_size;
+    set_rab_from_constants_for_rab_and_x(&(inf->rs[i*n]),
         &a, &b, inf->consts_for_rab, x); 
     inf->as[i] = a;
     inf->bs[i] = b;
-    i+=1;
+    (inf->i)++;
     return b / a;
 }
 
@@ -61,14 +62,14 @@ charge_a_b_integral(
         double* B, 
         double* K, 
         double* I,
-        size_t n, 
-        size_t x_n, 
+        unsigned int n, 
+        unsigned int x_n, 
         double x_delta)
 {
     struct additional_information_for_b_divided_by_a inf =
         get_additional_information(a, b, r, A, B, K, I, n);
     execute_at_every_point_trapezoidal_rule(a_b_integral,
         execute_b_divided_by_a, 0, x_delta, x_n, &inf);
-    free_consnats_for_rab(inf.consts_for_rab);
+    free_constants_for_rab(inf.consts_for_rab);
 }
 

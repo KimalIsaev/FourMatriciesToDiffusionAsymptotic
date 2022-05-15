@@ -16,12 +16,13 @@ execute_at_every_point_trapezoidal_rule(
     double S = 0;
     double next_x = a + h;
     double f_next_x;
-    for(int i = 0; i < n; i++)
+    result[0] = 0; 
+    for(int i = 1; i < n; i++)
     {
         f_next_x = 
             f(next_x, additional_information_to_integration_function);
         S += (f_prev_x + f_next_x)/2;
-        result[i] = S;
+        result[i] = h*S;
         f_prev_x = f_next_x;
         prev_x = next_x;
         next_x += h;

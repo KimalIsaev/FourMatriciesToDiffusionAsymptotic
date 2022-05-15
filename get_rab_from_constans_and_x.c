@@ -1,4 +1,5 @@
-
+#include "get_rab_from_constans_and_x.h"
+#include "error_handle_library.h"
 #include "Meschach/matrix.h"
 #include "Meschach/matrix2.h"
 
@@ -32,7 +33,7 @@ concatenate_number_to_vector_end(
         const VEC* v,
         double number)
 {
-    VEC* result = v_get(v->dim);
+    VEC* result = v_get(v->dim + 1);
     for(size_t i = 0; i < v->dim; i++) {
             v_set_val(result, i, v_get_val(v, i));
     }
@@ -142,6 +143,7 @@ get_a(
         double x)
 {
     return in_prod(r, Be) - x*in_prod(r, Ie);
+    //return sv_mlt(x, Ie, VNULL);
 }
 
 VEC*
@@ -237,13 +239,13 @@ get_matrix_from_array(
     MAT* result = m_get(n,n);
     for(size_t i = 0; i < n; i++) {
         for(size_t j = 0; j < n; j++) {
-            m_set_val(result, i, j, a[i + n*j]);
+            m_set_val(result, i, j, a[n*i + j]);
         }
     }
     return result;
 }
 
-void* set_constants_for_rab_from_ABKI(
+void* get_constants_for_rab_from_ABKI(
     double* A_given,
     double* B_given,
     double* K_given,
@@ -267,6 +269,7 @@ void* set_constants_for_rab_from_ABKI(
     c->Ie = mv_mlt(I, e, VNULL);
     c->u = u;
     c->e = e;
+    c->n = n;
     
     M_FREE(A);
     return (void*)c;
