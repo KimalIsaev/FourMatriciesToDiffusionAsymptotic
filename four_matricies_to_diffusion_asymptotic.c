@@ -27,7 +27,7 @@ execute_b_divided_by_a(
     inf->as[i] = a;
     inf->bs[i] = b;
     (inf->i)++;
-    return b / a;
+    return a / b;
 }
 
 struct additional_information_for_b_divided_by_a

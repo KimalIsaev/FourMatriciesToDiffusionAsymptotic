@@ -8,13 +8,13 @@
 
 #define n 2
 #define n_squared (n*n)
-#define x_end 1
-#define percision 0.1
+#define x_end 20
+#define percision 0.01
 #define x_n (lround(ceil(x_end/percision)))
 #define n_of_states (n*x_n)
-const double lambda = 0.025;
+const double lambda = 1;
 const double sigma = percision;
-const double mu = 0.15;
+const double mu = 2.1;
 const double r = 0.5;
 /*
 double difference_between_one_and_sum(
@@ -27,6 +27,25 @@ double difference_between_one_and_sum(
     return fabs(1 - sum);
 }
 */
+
+void print_array_with_indices(
+        const double* a,
+        size_t a_n)
+{
+    for (size_t i = 0; i < a_n; i++) {
+        printf("%d:%E ", i, a[i]);
+    }
+}
+
+void print_array(
+        const double* a,
+        size_t a_n)
+{
+    for (size_t i = 0; i < a_n; i++) {
+        printf("%E ", a[i]);
+    }
+}
+
 double sum_of_all_propabilities(
         const double* probabilities)
 {
@@ -295,6 +314,15 @@ charge_approximate_orbit_distribution(
         kolmogorov_distance(r_array, percise_r_array, n_of_states));
     printf("difference for a: %f\n", 
         kolmogorov_distance(a, percise_a, x_n));
+    //printf("a:\n");
+    //print_array_with_indices(a, x_n);
+    //printf("\n");
+    //printf("b:\n");
+    //print_array_with_indices(b, x_n);
+    //printf("\n");
+    //printf("a_b_integral:\n");
+    //print_array(a_b_integral, x_n);
+    //printf("\n");
 }
 
 double identity(double x, void* c)
@@ -314,6 +342,12 @@ int main()
     
     charge_approximate_orbit_distribution(approximate_orbit_distribution);
     charge_percise_orbit_distribution(percise_orbit_distribution);
+    //printf("Approx:\n");
+    //print_array_with_indices(approximate_orbit_distribution, x_n);
+    //printf("\n");
+    //printf("Percise:\n");
+    //print_array(percise_orbit_distribution, x_n);
+    //printf("\n");
     printf("difference for distribution: %f\n", 
         kolmogorov_distance(
             approximate_orbit_distribution, 

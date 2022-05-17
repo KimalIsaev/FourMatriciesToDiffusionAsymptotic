@@ -191,17 +191,17 @@ get_b(
     MAT* B_minus_xI = m_sub(B, xI, MNULL);
     VEC* g_to_B_minus_xI = vm_mlt(B_minus_xI, g, VNULL);
     VEC* xrI = vm_mlt(xI, r, VNULL);
-    VEC* g_to_B_minus_xI_all_minus_xrI = v_sub(
+    VEC* g_to_B_minus_xI_all_plus_xrI = v_add(
         g_to_B_minus_xI, xrI, VNULL);
     double result = 
-        2*in_prod(g_to_B_minus_xI_all_minus_xrI, e) + a;
+        2*in_prod(g_to_B_minus_xI_all_plus_xrI, e) + a;
     
     V_FREE(g);
     M_FREE(xI);
     M_FREE(B_minus_xI);
     V_FREE(g_to_B_minus_xI);
     V_FREE(xrI);
-    V_FREE(g_to_B_minus_xI_all_minus_xrI);
+    V_FREE(g_to_B_minus_xI_all_plus_xrI);
     return result;
 }
 
